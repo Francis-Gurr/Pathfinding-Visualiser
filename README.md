@@ -36,7 +36,6 @@ Achieve basic functionality; small map area, fixed start and end nodes, only Dij
 - [ ] Create animation.
 
 #### Further functionality
-Add more functionality.
 - [ ] Increase map area.
 - [ ] Allow custom start and end nodes.
 - [ ] Implement more path-finding algorithms.
