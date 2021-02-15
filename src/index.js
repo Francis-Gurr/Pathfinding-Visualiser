@@ -35,10 +35,10 @@ class Application extends React.Component {
         map.addControl(new mapboxgl.NavigationControl(), 'top-right');
         
         // Add initial markers
-        var mark1 = new mapboxgl.Marker()
+        var startMark = new mapboxgl.Marker()
         .setLngLat([-1.4741566, 53.3807122]) // Carver street
         .addTo(map);
-        var mark2 = new mapboxgl.Marker()
+        var endMark = new mapboxgl.Marker()
         .setLngLat([-1.4717378, 53.3884883]) // Alma street
         .addTo(map);
     }
