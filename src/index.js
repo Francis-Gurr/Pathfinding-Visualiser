@@ -9,9 +9,9 @@ class Application extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lng: 5,
-            lat: 34,
-            zoom: 2
+            lng: -1.4704,
+            lat: 53.3847,
+            zoom: 15.35
         };
     }
     
@@ -23,6 +23,24 @@ class Application extends React.Component {
             center: [this.state.lng, this.state.lat],
             zoom: this.state.zoom
         });
+    
+        // Set map bounds
+        var bounds = [
+            [-1.4866000, 53.3718000], // [west, south] i.e. [minlong, minlat]
+            [-1.4542000, 53.3906000]  // [east, north] i.e. [maxlong, maxlat]
+        ];
+        map.setMaxBounds(bounds);
+        
+        // Add navigation control (the +/- zoom buttons)
+        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        
+        // Add initial markers
+        var mark1 = new mapboxgl.Marker()
+        .setLngLat([-1.4741566, 53.3807122]) // Carver street
+        .addTo(map);
+        var mark2 = new mapboxgl.Marker()
+        .setLngLat([-1.4717378, 53.3884883]) // Alma street
+        .addTo(map);
     }
     
     render() {
