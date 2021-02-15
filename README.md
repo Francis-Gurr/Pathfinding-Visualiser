@@ -27,6 +27,7 @@ Uses MySQL to store the routing graph using map data from obtained from [OpenStr
 ## Tasks
 This project is still in progress and has not been completed yet.
 Below is a rough design plan/task list.
+- [x] Research required tools. 
 
 #### Basic functionality
 Achieve basic functionality; small map area, fixed start and end nodes, only Dijkstra's algorithm, only roads (no cycle-only/pedestrian routes).
