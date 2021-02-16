@@ -2,7 +2,7 @@
 
 Project aim is to be able to visualise path finding algrorithms in action with real map data.
 
-Personal aim is to learn new skills. Before starting this project I have had little or no previous experience with many of the tools used (e.g. ReactJS, MySQL).
+Personal aim is to learn new skills. Before starting this project I have had little or no previous experience with many of the tools used.
 A secondary aim is to demonstrate my abilities.
 
 Inspiration for the project originated from [Clement's pathfinding visualizer](https://clementmihailescu.github.io/Pathfinding-Visualizer/).
