@@ -3,7 +3,12 @@ import './Header.css';
 const Header = () => {
   return (
     <header className='header'>
-      <h1> Pathfinding Visualiser </h1>
+      <div>
+        <h1 className='title'> Pathfinding Visualiser </h1>
+      </div>
+      <div>
+        <button className="button">Start</button>
+      </div>
     </header>
   );
 };
