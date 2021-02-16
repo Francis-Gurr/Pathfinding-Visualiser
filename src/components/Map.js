@@ -16,7 +16,7 @@ const Map = () => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/dark-v10',
       center: [lng, lat],
       zoom: zoom
     });
@@ -28,7 +28,10 @@ const Map = () => {
     map.setMaxBounds(bounds);
 
     // Add navigation control (the +/- zoom buttons)
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.addControl(new mapboxgl.NavigationControl({
+      // Hide compass control
+      showCompass: false
+    }), 'top-right');
     
     var endMark = new mapboxgl.Marker()
       .setLngLat([-1.4717378, 53.3884883]) // Alma street
