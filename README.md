@@ -11,7 +11,7 @@ I wanted to put my own spin on the idea using real map data.
 
 ## Features (currently incomplete)
 #### Front end
-Uses [Mapbox GL JS](https://www.mapbox.com/) in a React app.
+React app with [Mapbox GL JS](https://www.mapbox.com/).
 - Map will have moveable start and finish markers.
 - Search box for finding specific marker locations.
 - Inputs for algorithm selection and start.
@@ -19,15 +19,14 @@ Uses [Mapbox GL JS](https://www.mapbox.com/) in a React app.
 - Depiction of the calculated path.
 
 #### Back end
-Uses MySQL to store the routing graph using map data from obtained from [OpenStreetMap](https://www.openstreetmap.org/).
-- The OSM data is parsed into a routing graph using the [osm4routing](https://github.com/Tristramg/osm4routing) command-line tool.
+Node, Express and MySQL.
+- The [OpenStreetMap](https://www.openstreetmap.org/) data is parsed into a routing graph using the [osm4routing](https://github.com/Tristramg/osm4routing) command-line tool which is store in a MySQL database.
 - Path finding algorithms that return all the visited nodes and the final path nodes.
 
 
 ## Tasks
 This project is still in progress and has not been completed yet.
 Below is a rough design plan/task list.
-- [x] Research required tools. 
 
 #### Basic functionality
 Achieve basic functionality; small map area, fixed start and end nodes, only Dijkstra's algorithm, only roads (no cycle-only/pedestrian routes).
