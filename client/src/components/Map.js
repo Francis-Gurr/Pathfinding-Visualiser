@@ -4,7 +4,7 @@ import './Map.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZnJhbmNpcy1nIiwiYSI6ImNrbDZyc3U4bjFndG0ycG1uam5sdjYyMzkifQ.5I5Q5hF5IEv9n2f87hGw2g';
 
-const Map = () => {
+const Map = ({startLoc, endLoc}) => {
   const mapContainerRef = useRef(null);
 
   // Initial latitude, longitude and zoom
@@ -21,6 +21,7 @@ const Map = () => {
       zoom: zoom
     });
     
+    // Map bounds
     var bounds = [
       [-1.4866000, 53.3718000], // [west, south] i.e. [minlong, minlat]
       [-1.4542000, 53.3906000]  // [east, north] i.e. [maxlong, maxlat]
@@ -29,16 +30,17 @@ const Map = () => {
 
     // Add navigation control (the +/- zoom buttons)
     map.addControl(new mapboxgl.NavigationControl({
-      // Hide compass control
-      showCompass: false
+      showCompass: false // Hide compass control
     }), 'top-right');
-    
-    var endMark = new mapboxgl.Marker()
-      .setLngLat([-1.4717378, 53.3884883]) // Alma street
-      .addTo(map);
-      
+
+    // Start location
     var startMark = new mapboxgl.Marker()
-      .setLngLat([-1.4741566, 53.3807122]) // Carver street
+    .setLngLat(startLoc) // Carver street
+    .addTo(map);
+    
+    // End location
+    var endMark = new mapboxgl.Marker()
+      .setLngLat(endLoc) // Alma street
       .addTo(map);
 
     // Clean up on unmount
