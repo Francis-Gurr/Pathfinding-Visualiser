@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Axios from "axios";
 import "./App.css";
 import Header from "./components/Header";
 import Map from "./components/Map";
@@ -10,7 +11,12 @@ function App() {
 
   // Get path from server
   const getPath = () => {
-    console.log("run");
+    Axios.put("http://localhost:5000/path", {
+      lng: startLoc[0],
+      lat: startLoc[1],
+    }).then((response) => {
+      console.log(response.data[0].node_id);
+    });
   };
 
   return (
