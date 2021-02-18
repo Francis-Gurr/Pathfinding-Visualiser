@@ -37,8 +37,8 @@ Below is a rough design plan/task list.
 
 Achieve basic functionality; small map area, fixed start and end nodes, only Dijkstra's algorithm, only roads (no cycle-only/pedestrian routes).
 
-- [ ] Create a simple React app with a Mapbox map.
-- [ ] Create MySQL database of routing graph.
+- [x] Create a simple React app with a Mapbox map.
+- [x] Create MySQL database of routing graph.
 - [ ] Implement Dijkstra's algorithm.
 - [ ] Create animation.
 
