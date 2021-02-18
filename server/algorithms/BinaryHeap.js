@@ -12,13 +12,8 @@ const swap = (i, j) => {
   return;
 };
 
-// Insert a new key to the heap
-const insert = (key) => {
-  let i = binHeap.length; // Index at which to put new key (i.e at end of array)
-  binHeap.push(key);
-  map[key] = i;
-
-  // Bubble new key up DUPLICATE IN DECREASE KEY
+// Bubble up a key
+const bubbleUp = (i) => {
   while (i > 0) {
     // Swap if value of key is smaller than value of parent
     let parentIdx = Math.floor(i / 2);
@@ -32,6 +27,15 @@ const insert = (key) => {
   return;
 };
 
+// Insert a new key to the heap
+const insert = (key) => {
+  let i = binHeap.length; // Index at which to put new key (i.e at end of array)
+  binHeap.push(key);
+  map[key] = i;
+  bubbleUp(i);
+  return;
+};
+
 // Extract
 const extract = () => {
   const root = binHeap[0];
@@ -41,7 +45,7 @@ const extract = () => {
   binHeap.pop();
   map[binHeap[0]] = 0;
 
-  // Bubble new root down
+  // Bubble down the new root
   let parentIdx = 0;
   while (2 * parentIdx <= binHeap.length) {
     // Get the child with the smallest value
@@ -73,20 +77,9 @@ const decreaseKey = (key, newValue) => {
   //map.remove(key);
   binHeap[i] = newValue;
   //map[binHeap[i]] = i;
-
-  // Bubble new key up DUPLICATE IN INSERT
-  while (i > 0) {
-    // Swap if value of key is smaller than value of parent
-    let parentIdx = Math.floor(i / 2);
-    if (binHeap[i] < binHeap[parentIdx]) {
-      swap(i, parentIdx);
-      i = parentIdx;
-    } else {
-      break;
-    }
-  }
+  bubbleUp(i);
   return;
 };
 
 //module.exports = { func };
-export default { swap, insert, extract, decreaseKey };
+export default { insert, extract, decreaseKey };
