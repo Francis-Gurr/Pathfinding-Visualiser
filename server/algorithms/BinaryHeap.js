@@ -1,4 +1,4 @@
-const binaryHeap = () => {
+const BinaryHeap = () => {
   let heap = [];
   let map = new Map(); // Index of each key
 
@@ -76,10 +76,10 @@ const binaryHeap = () => {
   // Decrease-Key
   const decreaseKey = (key, newValue) => {
     let i = map(key);
-    //map.remove(key);
-    heap[i] = newValue;
-    //map[binHeap[i]] = i;
-    bubbleUp(i);
+    if (heap[i] < newValue) {
+      heap[i] = newValue;
+      bubbleUp(i);
+    }
     return;
   };
 };

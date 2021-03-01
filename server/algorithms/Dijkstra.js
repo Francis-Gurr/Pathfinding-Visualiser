@@ -103,10 +103,13 @@ const Dikstra = (src, target, mode, con) => {
 
   // While heap is not empty
   while (binHeap.isNotEmpty()) {
-    // -> Extract the min (i.e. visit it, add to visited array)
+    // Extract the min (i.e. visit it, add to visited array)
     let min = binHeap.extract();
     let neighbours = getNeighbours(min);
     // Update distances to neighbours
+    for (let i = 0; i < neighbours.length; i++) {
+      binHeap.decreaseKey(neighbours[i].id, neighbours[i].distance);
+    }
     visitedNodes.push(min);
   }
 
