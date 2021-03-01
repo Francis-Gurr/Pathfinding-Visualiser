@@ -64,23 +64,34 @@ const Dikstra = (src, target, mode, con) => {
   // Get the neighbours of a node
   const getNeighbours = (node) => {
     let neighbours = [];
-    // Check edges table for source column matches
-    for (row in queryTargets) {
+    // Check edges table for target column matches
+    let rowsForward = queryForward(node.id);
+    for (let i = 0; i < rowsForward.length; i++) {
+      // Create new PathNode and add to the list of neighbours
       const neigh = new PathNode(
-        (id = targetCol),
-        (distFromSrc = node.distFromSrc + lengthCol),
+        (id = rowsForward[i].target),
+        (distFromSrc = node.distFromSrc + rowsForward[i].distance),
         (head = visitedNodes.length),
-        (edgePath = wktCol)
+        (edgeGeometry = rowsForward[i].geometry)
       );
       neighbours.push(neigh);
     }
-    // Check edges table for target column matches
-    for (row in querySources) {
-      const neigh = new pathNode(
-        (id = sourceCol),
-        (distFromSrc = node.distFromSrc + lengthCol),
+
+    // Check edges table for source column matches (i.e. edge reversed)
+    let rowsReverse = queryReverse(node.id);
+    for (let i = 0; i < rowsReverse.length; i++) {
+      // Reverse the edge geometry
+      let revGeometry = [];
+      for (let j = rowsReverse[i].geometry.length - 1; j > 0; j = j - 2) {
+        revGeometry.push(rowsReverse[i].geometry[j - 1]);
+        revGeometry.push(rowsReverse[i].geometry[j]);
+      }
+      // Create new PathNode and add to the list of neighbours
+      const neigh = new PathNode(
+        (id = rowsReverse[i].source),
+        (distFromSrc = node.distFromSrc + rowsReverse[i].distance),
         (head = visitedNodes.length),
-        (edgePath = wktCol.reversed)
+        (edgeGeometry = rowsReverse[i].geometry)
       );
       neighbours.push(neigh);
     }
