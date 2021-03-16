@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
+const { default: Graph } = require("./graph/Graph");
 
 app.use(cors());
 app.use(express.json());
@@ -14,12 +15,14 @@ const con = mysql.createConnection({
   database: "sheffield_city_centre",
 });
 
+// Create graphs
+const carGraph = new Graph(con, 0);
+const cycleGraph = new Graph(con, 1);
+const footGraph = new Graph(con, 2);
+
 app.put("/path", (req, res) => {
   const lng = req.body.lng;
   const lat = req.body.lat;
-
-  console.log(lng);
-  console.log(lat);
 
   con.query(
     "SELECT node_id FROM nodes WHERE longitude = ? AND latitude = ?",
