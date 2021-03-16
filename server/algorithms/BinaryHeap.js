@@ -1,24 +1,34 @@
 const BinaryHeap = () => {
-  let heap = [];
-  let map = new Map(); // Index of each key
+  let heap = []; // heap array of node objects (node object = [node id, pointer to previous node, distance])
+  let map = new Map(); // KEY: node id, VALUE: Index of node in heap array
 
-  // Swap two keys in a heap
+  // Get the current value of a node
+  const getValue = (node) => {
+    // If node is not present in heap return -1
+    if (!map.has(node.id)) {
+      return -1;
+    }
+    let i = map.get(key.id);
+    return heap[i];
+  };
+
+  // Swap two nodes in the heap
   const swap = (i, j) => {
     const temp = heap[i];
     heap[i] = heap[j];
     heap[j] = temp;
     // Update index of swapped keys in map
-    map[heap[i]] = i;
-    map[heap[j]] = j;
+    map.set(heap[i].id, i);
+    map.set(heap[j].id, j);
     return;
   };
 
-  // Bubble up a key
+  // Bubble up a node
   const bubbleUp = (i) => {
     while (i > 0) {
-      // Swap if value of key is smaller than value of parent
+      // Swap if value of node is smaller than value of parent
       let parentIdx = Math.floor(i / 2);
-      if (heap[i] < heap[parentIdx]) {
+      if (heap[i].distance < heap[parentIdx].distance) {
         swap(i, parentIdx);
         i = parentIdx;
       } else {
@@ -28,11 +38,11 @@ const BinaryHeap = () => {
     return;
   };
 
-  // Insert a new key to the heap
-  const insert = (key) => {
-    let i = heap.length; // Index at which to put new key (i.e at end of array)
-    heap.push(key);
-    map[key] = i;
+  // Insert a new node into the heap
+  const insert = (node) => {
+    let i = heap.length; // Index at which to put new node (i.e at end of array)
+    heap.push(node);
+    map[node.id] = i;
     bubbleUp(i);
     return;
   };
@@ -40,11 +50,11 @@ const BinaryHeap = () => {
   // Extract
   const extract = () => {
     const root = heap[0];
-    map.delete[root]; // Remove key from map
-    // Put last key in the roots place
+    map.delete(root.id); // Remove node from map
+    // Put last node in the roots place
     heap[0] = heap[heap.length - 1];
     heap.pop();
-    map[heap[0]] = 0;
+    map.set(heap[0].id) = 0;
 
     // Bubble down the new root
     let parentIdx = 0;
@@ -57,13 +67,13 @@ const BinaryHeap = () => {
         minChildIdx = 2 * parentIdx;
       } else {
         minChildIdx =
-          heap[2 * parentIdx] < heap[2 * parentIdx + 1]
+          heap[2 * parentIdx].distance < heap[2 * parentIdx + 1].distance
             ? 2 * parentIdx
             : 2 * parentIdx + 1;
       }
 
       // If the parent value is greater than the child; swap them
-      if (heap[parentIdx] > heap[minChildIdx]) {
+      if (heap[parentIdx].distance > heap[minChildIdx].distance) {
         swap(parentIdx, minChildIdx);
         parentIdx = minChildIdx;
       } else {
@@ -74,14 +84,12 @@ const BinaryHeap = () => {
   };
 
   // Decrease-Key
-  const decreaseKey = (key, newValue) => {
-    let i = map(key);
-    if (heap[i] < newValue) {
-      heap[i] = newValue;
-      bubbleUp(i);
-    }
+  const decreaseKey = (node) => {
+    let i = map.get(node.id);
+    heap[i] = node;
+    bubbleUp(i);
     return;
   };
 };
 //module.exports = { func };
-export default { binaryHeap };
+export default BinaryHeap;
