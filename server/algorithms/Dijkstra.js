@@ -1,117 +1,31 @@
 //const heap = require("./BinaryHeap");
 import heap from "./BinaryHeap";
-import PathNode from "./PathNode";
 
-const Dikstra = (src, target, mode, con) => {
-  const src = this.src;
+const Dikstra = (srcNodeId, graph) => {
   const target = this.target;
-  const mode = this.mode; // Mode of transport (0: car, 1: bike, 2: foot)
-  const binHeap = new BinaryHeap();
-  let visitedNodes = []; // Array of nodes in visited order
-
-  // Get edges in the forward direction (i.e. nodeId is the target)
-  const queryForward = (nodeId) => {
-    let sqlQuery = "SELECT * FROM edges WHERE target = ? AND ";
-    switch (mode) {
-      //car
-      case 0:
-        sqlQuery + mysql.escape("car != 0");
-        break;
-      // bike
-      case 1:
-        sqlQuery + mysql.escape("bike != 0");
-        break;
-      // foot
-      case 2:
-        sqlQuery + mysql.escape("foot != 0");
-        break;
-    }
-    con.query(sqlQuery, [nodeId], (err, results) => {
-      if (err) {
-        console.log(err);
-      } else {
-        return results;
-      }
-    });
-  };
-
-  // Get edges in the opposite direction (i.e. nodeId is the source)
-  const queryReverse = (nodeId) => {
-    let sqlQuery = "SELECT * FROM edges WHERE source = ? AND ";
-    switch (mode) {
-      //car
-      case 0:
-        sqlQuery + mysql.escape("car_reverse != 0");
-        break;
-      // bike
-      case 1:
-        sqlQuery + mysql.escape("bike_reverse != 0");
-        break;
-      // foot
-      case 2:
-        sqlQuery + mysql.escape("foot != 0");
-        break;
-    }
-    con.query(sqlQuery, [nodeId], (err, results) => {
-      if (err) {
-        console.log(err);
-      } else {
-        return results;
-      }
-    });
-  };
-
-  // Get the neighbours of a node
-  const getNeighbours = (node) => {
-    let neighbours = [];
-    // Check edges table for target column matches
-    let rowsForward = queryForward(node.id);
-    for (let i = 0; i < rowsForward.length; i++) {
-      // Create new PathNode and add to the list of neighbours
-      const neigh = new PathNode(
-        (id = rowsForward[i].target),
-        (distFromSrc = node.distFromSrc + rowsForward[i].distance),
-        (head = visitedNodes.length),
-        (edgeGeometry = rowsForward[i].geometry)
-      );
-      neighbours.push(neigh);
-    }
-
-    // Check edges table for source column matches (i.e. edge reversed)
-    let rowsReverse = queryReverse(node.id);
-    for (let i = 0; i < rowsReverse.length; i++) {
-      // Reverse the edge geometry
-      let revGeometry = [];
-      for (let j = rowsReverse[i].geometry.length - 1; j > 0; j = j - 2) {
-        revGeometry.push(rowsReverse[i].geometry[j - 1]);
-        revGeometry.push(rowsReverse[i].geometry[j]);
-      }
-      // Create new PathNode and add to the list of neighbours
-      const neigh = new PathNode(
-        (id = rowsReverse[i].source),
-        (distFromSrc = node.distFromSrc + rowsReverse[i].distance),
-        (head = visitedNodes.length),
-        (edgeGeometry = rowsReverse[i].geometry)
-      );
-      neighbours.push(neigh);
-    }
-    return neighbours;
-  };
+  let visitedNodes = []; // Array of nodes in visited order [[srcNodeId, 0, 0], [node id, pointer to previous node, distance to source], ...]
 
   // Initialise heap with src node with distance 0 and it's neighbours
-  binHeap.insert(src);
+  const binHeap = new BinaryHeap();
+  binHeap.insert([srcNodeId, 0, 0]);
 
   // While heap is not empty
   while (binHeap.isNotEmpty()) {
-    // Extract the min (i.e. visit it, add to visited array)
+    // Extract the min (i.e. visit it, add to visitedNodes array)
     let min = binHeap.extract();
-    let neighbours = getNeighbours(min);
+    // Get neighbours
+    let neighbours = graph.getNeighbours(min); // [[neighbour 1, distance], [neighbour 2, distance], ... , [neighbour n, distance]]
     // Update distances to neighbours
     for (let i = 0; i < neighbours.length; i++) {
-      binHeap.decreaseKey(neighbours[i].id, neighbours[i].distance);
+      let nodeId = neighbours[i][0];
+      let previousPointer = visitedNodes.length; // Pointer to the previous node (i.e. min) in visitedNodes array
+      let distanceToSrc = min.distance + neighbours[i][1];
+      binHeap.decreaseKey([nodeId, previousPointer, distanceToSrc]);
     }
     visitedNodes.push(min);
   }
 
   return visitedNodes;
 };
+
+export default Dijkstra;
