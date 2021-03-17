@@ -4,53 +4,65 @@ import GraphNode from "./GraphNode";
 const Graph = (con, transportMode) => {
   this.con = con;
   this.transportMode = transportMode; // 0 = car, 1 = cycle, 2 = foot
-  var adjacencyMap; // KEY: source node, VALUE: [[neighbour 1, distance], [neighbour 2, distance], ... , [neighbour n, distance]]
-  populateAdjacencyMap();
-  var nodeMap; // KEY: node id, VALUE: [lat, long]
-  populateNodeMap();
+  var nodeMap; // KEY: node id, VALUE: GraphNode
+  addNodes();
+  addNeighbours();
+  removeSingletons();
 
-  const populateAdjacencyMap = () => {
-    adjacencyMap = new Map();
-    // Query edge database for matching rows
-    let rows = queryEdgeTable();
+  // Add nodes to the node map
+  const addNodes = () => {
+    nodeMap = new Map();
+    // Query node table in database
+    let rows = queryNodeTable();
     for (let i = 0; i < rows.length; i++) {
-      let source = rows[i].source;
-      let target = rows[i].target;
-      let distance = rows[i].distance;
-      if (adjacencyMap.has(source)) {
-        adjacencyMap.get(source).push([target, distance]);
-      } else {
-        adjacencyMap.set(source, [[target, distance]]);
-      }
+      let id = rows[i].node_id;
+      let lat = rows[i].latitude;
+      let long = rows[i].longitude;
+
+      node = new GraphNode(id, lat, long);
+      nodeMap.set(id, node);
     }
   };
 
-  const populateNodeMap = () => {
-    nodeMap = new Map();
-    let rows = queryNodeTable();
+  // Find and add neighbours to the graph nodes
+  const addNeighbours = () => {
+    // Query edge table in database
+    let rows = queryEdgeTable();
     for (let i = 0; i < rows.length; i++) {
-      let node = rows[i].node_id;
-      let lat = rows[i].latitude;
-      let long = rows[i].longitude;
-      // Add the node to the map if it is in the graph (i.e. connected to other nodes)
-      if (adjacencyMap.has(node)) {
-        nodeMap.set(node, [lat, long]);
+      let sourceID = rows[i].source;
+      let targetID = rows[i].target;
+      let distance = rows[i].distance;
+      let geometry = rows[i].geometry;
+
+      let sourceNode = nodeMap.get(sourceID);
+      let targetNode = nodeMap.get(targetID);
+      sourceNode.addNeighbour(targetNode, distance, geometry);
+    }
+  };
+
+  // Remove singleton nodes, i.e. nodes with no edges/neighbours
+  const removeSingletons = () => {
+    for (let [id, node] of nodeMap) {
+      if (!node.hasNeighbours) {
+        nodeMap.delete(id);
       }
     }
   };
 
   // Get the node id of the nearest node in the graph to a location (latitude, longitude)
-  const getNearestNode = (latitude, longitude) => {
-    let nearestNode;
+  const getNearestNodeID = (latitude, longitude) => {
+    let nearestNodeID;
     let minDistance;
-    for (let [key, value] of nodeMap) {
-      let distance = calcDistance(value[0], value[1], latitude, longitude);
+    for (let [id, node] of nodeMap) {
+      // Calculate distance between node and location
+      let distance = calcDistance(node.lat, node.long, latitude, longitude);
+      // If distance is the new minimum, update minimum distance and nearest node
       if (minDistance === null || distance < minDistance) {
         minDistance = distance;
-        nearestNode = key;
+        nearestNodeID = id;
       }
     }
-    return nearestNode;
+    return nearestNodeID;
   };
 
   // Calculates distance between a pair of latitude and longitude points using Haversine formula
@@ -65,34 +77,8 @@ const Graph = (con, transportMode) => {
   };
 
   // Get the neighbours of a node
-  const getNeighbours = (node) => {
-    return adjacencyMap.get(node);
-  };
-
-  // Get data from edges table for this transport mode
-  const queryEdges = () => {
-    let sqlQuery = "SELECT * FROM edges WHERE ";
-    switch (transportMode) {
-      //car
-      case 0:
-        sqlQuery + mysql.escape("car != 0");
-        break;
-      // cycle
-      case 1:
-        sqlQuery + mysql.escape("cycle != 0");
-        break;
-      // foot
-      case 2:
-        sqlQuery + mysql.escape("foot != 0");
-        break;
-    }
-    con.query(sqlQuery, [], (err, rows) => {
-      if (err) {
-        console.log(err);
-      } else {
-        return rows;
-      }
-    });
+  const getNeighbours = (nodeID) => {
+    return nodeMap.get(nodeID).neighbours;
   };
 
   // Get data from edges table for this transport mode
