@@ -1,31 +1,46 @@
 //const heap = require("./BinaryHeap");
+import PathTree from "../Path";
+import PathTreeNode from "../path/PathTreeNode";
 import heap from "./BinaryHeap";
 
-const Dikstra = (srcNodeId, graph) => {
-  const target = this.target;
-  let visitedNodes = []; // Array of nodes in visited order [[srcNodeId, 0, 0], [node id, pointer to previous node, distance to source], ...]
+const Dikstra = (sourceNode, targetNodeId, graph) => {
+  var path = new Path();
 
-  // Initialise heap with src node with distance 0 and it's neighbours
+  // Initialise heap with source node
   const binHeap = new BinaryHeap();
-  binHeap.insert([srcNodeId, 0, 0]);
+  binHeap.insert(sourceNode);
 
   // While heap is not empty
   while (binHeap.isNotEmpty()) {
-    // Extract the min (i.e. visit it, add to visitedNodes array)
+    // Extract the min and add it to the path (i.e. visit it)
     let min = binHeap.extract();
+    path.add(min);
+
     // Get neighbours
-    let neighbours = graph.getNeighbours(min); // [[neighbour 1, distance], [neighbour 2, distance], ... , [neighbour n, distance]]
+    let neighbours = min.neighbours; // Neighbours = [[GraphNode, distance, geometry], [gn, dist, geo], ... , [gn, dist, geo]]
     // Update distances to neighbours
     for (let i = 0; i < neighbours.length; i++) {
-      let nodeId = neighbours[i][0];
-      let previousPointer = visitedNodes.length; // Pointer to the previous node (i.e. min) in visitedNodes array
-      let distanceToSrc = min.distance + neighbours[i][1];
-      binHeap.decreaseKey([nodeId, previousPointer, distanceToSrc]);
+      let neighbourNode = neighbours[i][0];
+      let distToSrcViaMin = min.distToSrc() + neighbours[i][1]; // Distance from neighbour to source going via min
+      let currDistToSrc = neighbourNode.distToSrc(); // Current distance from neighbour to source
+
+      // If the distance via min is shorter, update the path to be via min
+      if (distToSrcViaMin < currDistToSrc) {
+        neighbourNode.updatePath(min, distToSrcViaMin, neighbours[i][2]); // (previous = min, distance = via min, geometry)
+
+        // If the current distance from neighbour to source is inf, then it has not been yet been seen, so add it to the binary heap
+        if (!Number.isFinite(currDistToSrc)) {
+          binHeap.insert(neighbourNode);
+        }
+        // Else if the distance via min is shorter, update the path to be via min
+        else {
+          binHeap.decreaseKey(neighbourNode);
+        }
+      }
     }
-    visitedNodes.push(min);
   }
 
-  return visitedNodes;
+  return path;
 };
 
 export default Dijkstra;

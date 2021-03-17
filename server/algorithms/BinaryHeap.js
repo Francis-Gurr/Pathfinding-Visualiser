@@ -1,16 +1,6 @@
 const BinaryHeap = () => {
-  let heap = []; // heap array of node objects (node object = [node id, pointer to previous node, distance])
+  let heap = []; // heap array of GraphNode objects
   let map = new Map(); // KEY: node id, VALUE: Index of node in heap array
-
-  // Get the current value of a node
-  const getValue = (node) => {
-    // If node is not present in heap return -1
-    if (!map.has(node.id)) {
-      return -1;
-    }
-    let i = map.get(key.id);
-    return heap[i];
-  };
 
   // Swap two nodes in the heap
   const swap = (i, j) => {
@@ -28,7 +18,7 @@ const BinaryHeap = () => {
     while (i > 0) {
       // Swap if value of node is smaller than value of parent
       let parentIdx = Math.floor(i / 2);
-      if (heap[i].distance < heap[parentIdx].distance) {
+      if (heap[i].distToSrc() < heap[parentIdx].distToSrc()) {
         swap(i, parentIdx);
         i = parentIdx;
       } else {
@@ -67,13 +57,13 @@ const BinaryHeap = () => {
         minChildIdx = 2 * parentIdx;
       } else {
         minChildIdx =
-          heap[2 * parentIdx].distance < heap[2 * parentIdx + 1].distance
+          heap[2 * parentIdx].distToSrc() < heap[2 * parentIdx + 1].distToSrc()
             ? 2 * parentIdx
             : 2 * parentIdx + 1;
       }
 
       // If the parent value is greater than the child; swap them
-      if (heap[parentIdx].distance > heap[minChildIdx].distance) {
+      if (heap[parentIdx].distToSrc() > heap[minChildIdx].distToSrc()) {
         swap(parentIdx, minChildIdx);
         parentIdx = minChildIdx;
       } else {
@@ -86,7 +76,7 @@ const BinaryHeap = () => {
   // Decrease-Key
   const decreaseKey = (node) => {
     let i = map.get(node.id);
-    heap[i] = node;
+    //heap[i] = node;
     bubbleUp(i);
     return;
   };
