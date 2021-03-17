@@ -1,9 +1,9 @@
-const GraphNode = (id, lat, long) => {
+const GraphNode = (id, lat, lng) => {
   this.id = id; // OSM node id
   this.lat = lat;
-  this.long = long;
+  this.lng = lng;
   var neighbours = []; // Neighbours = [[GraphNode, distance to neighbour, geometry], [gn, dist, geo], ... , [gn, dist, geo]]
-  var pathToSrc = { previous: null, distance: inf, geometry: null }; // [previous GraphNode, distance to source, geometry of previous edge]
+  var pathToSrc = [null, Infinity, null]; // [previous GraphNode, distance to source, geometry of previous edge]
 
   const hasNeighbours = () => {
     return neighbours.length > 0;
@@ -14,13 +14,11 @@ const GraphNode = (id, lat, long) => {
   };
 
   const distToSrc = () => {
-    return pathToSrc.distance;
+    return pathToSrc[1];
   };
 
   const updatePath = (previous, distance, geometry) => {
-    pathToSrc.previous = previous;
-    pathToSrc.distance = distance;
-    pathToSrc.geometry = geometry;
+    pathToSrc = [previous, distance, geometry];
   };
 };
 

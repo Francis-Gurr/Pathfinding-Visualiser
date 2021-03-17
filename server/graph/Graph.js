@@ -17,9 +17,9 @@ const Graph = (con, transportMode) => {
     for (let i = 0; i < rows.length; i++) {
       let id = rows[i].node_id;
       let lat = rows[i].latitude;
-      let long = rows[i].longitude;
+      let lng = rows[i].longitude;
 
-      node = new GraphNode(id, lat, long);
+      node = new GraphNode(id, lat, lng);
       nodeMap.set(id, node);
     }
   };
